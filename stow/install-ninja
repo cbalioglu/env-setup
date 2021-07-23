@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+set -o errexit
+
+_pkg_ver=${1:-1.10.2}
+
+_pkg_tag=ninja-$_pkg_ver
+
+_pkg_zip=~/.cache/stow/$_pkg_tag.zip
+
+_pkg_url=https://github.com/ninja-build/ninja/releases/download/v$_pkg_ver/ninja-linux.zip
+
+if [[ ! -f $_pkg_zip ]]; then
+    curl --fail --location --create-dirs --output "$_pkg_zip" "$_pkg_url"
+fi
+
+mkdir --parents ~/.local/stow/$_pkg_tag/bin && cd "$_"
+
+unzip "$_pkg_zip"

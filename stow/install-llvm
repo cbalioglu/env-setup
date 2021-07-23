@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+set -o errexit
+
+_pkg_ver=${1:-12.0.1}
+
+_pkg_tag=llvm-$_pkg_ver
+
+_git_url=https://github.com/llvm/llvm-project.git
+
+_git_tag=llvmorg-$_pkg_ver
+
+_src_dir=~/.local/src/$_pkg_tag
+_bld_dir=~/.local/src/$_pkg_tag-build
+
+if [[ ! -d $_src_dir/.git ]]; then
+    git clone --depth 1 --shallow-submodules --recurse-submodules --branch $_git_tag "$_git_url" "$_src_dir"
+fi
+
+cmake -GNinja\
+      -S "$_src_dir/llvm"\
+      -B "$_bld_dir"\
+      -DCMAKE_BUILD_TYPE=Release\
+      -DCMAKE_INSTALL_PREFIX="$HOME/.local/stow/$_pkg_tag"\
+      -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;compiler-rt;libcxx;libcxxabi;libunwind;lld;lldb;mlir;openmp;polly;pstl"\
+      -DLLVM_TARGETS_TO_BUILD=host\
+      -Wno-dev
+
+execute_job cmake --build "$_bld_dir"
+
+cmake --install "$_bld_dir"

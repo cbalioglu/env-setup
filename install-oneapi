@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -o errexit
+
+_installer_exe=~/.cache/oneapi_basekit-2021.3.0.sh
+
+_installer_url=https://registrationcenter-download.intel.com/akdlm/irc_nas/17977/l_BaseKit_p_2021.3.0.3219.sh
+
+if [[ ! -f $_installer_exe ]]; then
+    curl --fail --location --create-dirs --output "$_installer_exe" "$_installer_url"
+fi
+
+sh "$_installer_exe" -a --silent --eula accept --intel-sw-improvement-program-consent decline
+
+rm "$_installer_exe"

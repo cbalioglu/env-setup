@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+_base_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+
+mkdir -p ~/.vim/pack
+
+if ! command -v stow &>/dev/null; then
+    printf "stow not found!\n" >&2
+
+    exit 1
+fi
+
+stow --dir "$_base_dir" --target ~ dotfiles
+
+"$_base_dir/misc/symlink-ccache"

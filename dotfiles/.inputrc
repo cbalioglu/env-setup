@@ -1,0 +1,37 @@
+# Use vi-style command line editing.
+set editing-mode vi
+
+# Add a character to the beginning of the prompt indicating the vi mode.
+set show-mode-in-prompt on
+
+# Set the vi mode indicator strings.
+set vi-cmd-mode-string :
+set vi-ins-mode-string +
+
+# Append a character denoting a file's type to the filename when listing
+# possible completions.
+set visible-stats on
+
+# Display possible completions using LS_COLORS.
+set colored-stats on
+
+# Replace common prefixes longer than this value with an ellipsis when
+# displaying possible completions.
+set completion-prefix-display-length 2
+
+# List possible completions after a single <TAB>.
+set show-all-if-ambiguous on
+
+# Keep using the common key bindings in vi editing mode.
+"\C-p": previous-history
+"\C-n": next-history
+"\C-a": beginning-of-line
+"\C-e": end-of-line
+"\C-f": forward-char
+"\C-b": backward-char
+"\C-u": unix-line-discard
+"\C-w": unix-word-rubout
+"\C-l": clear-screen
+
+# Load the local configuration.
+$include ~/.inputrc.local

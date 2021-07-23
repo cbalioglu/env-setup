@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+_base_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+
+if "$_base_dir/install-dotfiles"; then
+    stow --dir "$_base_dir" --target ~ dotfiles-fb
+fi

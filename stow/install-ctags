@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+set -o errexit
+
+_pkg_tag=ctags
+
+_git_url=https://github.com/universal-ctags/ctags.git
+
+_src_dir=~/.local/src/$_pkg_tag
+_bld_dir=~/.local/src/$_pkg_tag-build
+
+mkdir --parents "$_src_dir" "$_bld_dir"
+
+if [[ ! -d $_src_dir/.git ]]; then
+    git clone --depth 1 --shallow-submodules --recurse-submodules "$_git_url" "$_src_dir"
+fi
+
+cd "$_src_dir"
+
+./autogen.sh
+
+cd "$_bld_dir"
+
+"$_src_dir/configure" --prefix="$HOME/.local/stow/$_pkg_tag"
+
+execute_job make --jobs
+
+make install

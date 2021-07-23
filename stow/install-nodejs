@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+set -o errexit
+
+_pkg_ver=${1:-14.17.4}
+
+_pkg_tag=nodejs-$_pkg_ver
+
+_pkg_dir=~/.local/stow/$_pkg_tag
+
+_pkg_tar=~/.cache/stow/$_pkg_tag.tar.xz
+
+_pkg_url=https://nodejs.org/dist/v$_pkg_ver/node-v$_pkg_ver-linux-x64.tar.xz
+
+if [[ ! -f $_pkg_tar ]]; then
+    curl --fail --location --create-dirs --output "$_pkg_tar" "$_pkg_url"
+fi
+
+mkdir --parents "$_pkg_dir" && cd "$_"
+
+tar xvf "$_pkg_tar" --strip-components 1
+
+cat << EOF > "$_pkg_dir/.stow-local-ignore"
+^/CHANGELOG.md$
+^/LICENSE$
+^/README.md$
+EOF

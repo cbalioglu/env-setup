@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+_bin_dir=~/.local/bin.ccache
+
+mkdir -p "$_bin_dir"
+
+_ccache_path=$(command -v ccache)
+if (( $? )); then
+    printf "ccache not found!\n" >&2
+
+    exit 1
+fi
+
+ln --symbolic --force "$_ccache_path" "$_bin_dir/gcc"
+ln --symbolic --force "$_ccache_path" "$_bin_dir/g++"
+ln --symbolic --force "$_ccache_path" "$_bin_dir/clang"
+ln --symbolic --force "$_ccache_path" "$_bin_dir/clang++"

@@ -1,0 +1,18 @@
+[submodule "dotfiles/.config/base16-shell"]
+	path = dotfiles/.config/base16-shell
+	url = https://github.com/chriskempson/base16-shell.git
+[submodule "dotfiles/.vim/pack/default/start/base16-vim"]
+	path = dotfiles/.vim/pack/default/start/base16-vim
+	url = https://github.com/chriskempson/base16-vim.git
+[submodule "dotfiles/.vim/pack/default/start/python-syntax"]
+	path = dotfiles/.vim/pack/default/start/python-syntax
+	url = https://github.com/vim-python/python-syntax.git
+[submodule "dotfiles/.vim/pack/default/start/vim-cmake-syntax"]
+	path = dotfiles/.vim/pack/default/start/vim-cmake-syntax
+	url = https://github.com/pboettch/vim-cmake-syntax.git
+[submodule "dotfiles/.vim/pack/default/start/vim-cpp-enhanced-highlight"]
+	path = dotfiles/.vim/pack/default/start/vim-cpp-enhanced-highlight
+	url = https://github.com/octol/vim-cpp-enhanced-highlight.git
+[submodule "dotfiles/.vim/pack/default/start/ack.vim"]
+	path = dotfiles/.vim/pack/default/start/ack.vim
+	url = https://github.com/mileszs/ack.vim.git

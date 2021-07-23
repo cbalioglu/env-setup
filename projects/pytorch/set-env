@@ -1,0 +1,170 @@
+#!/usr/bin/env bash
+
+if [[ $(basename "$0") == set-env ]]; then
+    printf "This script must be sourced!\n" >&2
+
+    exit 1
+fi
+
+if [[ -v _PYTORCH_ENV_ROOT ]]; then
+    printf "PyTorch development environment is already set. Open a new shell.\n" >&2
+
+    return 1
+fi
+
+if [[ ! -f setup.py ]]; then
+    printf "This script must be sourced at the root of the PyTorch repository.\n" >&2
+
+    return 1
+fi
+
+# Build for Ampere (e.g. A100).
+export TORCH_CUDA_ARCH_LIST=8.0
+
+# Set the Intel oneAPI variables.
+if [[ -d ~/intel/oneapi ]]; then
+    source ~/intel/oneapi/setvars.sh\
+        --config="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/oneapi-config.txt" >/dev/null
+
+    export INTEL_MKL_DIR=$MKLROOT
+fi
+
+# Update the prompt.
+PS1='(pytorch-${CC:-cc}${CMAKE_BUILD_TYPE:+-${CMAKE_BUILD_TYPE,,}}) '$PS1
+
+export _PYTORCH_ENV_ROOT=$(pwd)
+
+#
+# Build Options
+#
+export BUILD_BINARY=ON
+export BUILD_CUSTOM_PROTOBUF=OFF
+export BUILD_DOCS=OFF
+export BUILD_TEST=ON
+
+export USE_ASAN=OFF
+export USE_BLAS=ON
+export USE_CUDA=ON
+export USE_CUDNN=ON
+export USE_DISTRIBUTED=ON
+export USE_FFMPEG=ON
+export USE_GFLAGS=ON
+export USE_GLOG=ON
+export USE_GLOO=ON
+export USE_LAPACK=ON
+export USE_MPI=OFF
+export USE_NCCL=ON
+export USE_OPENCV=OFF
+export USE_SYSTEM_NCCL=ON
+export USE_SYSTEM_TBB=ON
+export USE_TBB=ON
+export USE_TENSORPIPE=ON
+
+export BLAS=MKL
+
+export ATEN_THREADING=TBB
+export MKL_THREADING=TBB
+
+#
+# Helper Functions
+#
+_switch_build()
+{
+    export CC=$1
+    export CXX=$2
+
+    export CMAKE_BUILD_TYPE=$3
+
+    (
+        cd "$_PYTORCH_ENV_ROOT"
+
+        build_dir=build-${CMAKE_BUILD_TYPE,,}/${CC}-$(${CC} -dumpversion)
+
+        mkdir --parents "$build_dir"
+
+        ln --symbolic --force --no-target-directory "$build_dir" build
+    )
+}
+
+switch-gcc-debug()
+{
+    _switch_build gcc g++ Debug
+}
+
+switch-gcc-release()
+{
+    _switch_build gcc g++ Release
+}
+
+switch-gcc-relwithdebinfo()
+{
+    _switch_build gcc g++ RelWithDebInfo
+}
+
+switch-clang-debug()
+{
+    _switch_build clang clang++ Debug
+}
+
+switch-clang-release()
+{
+    _switch_build clang clang++ Release
+}
+
+switch-clang-relwithdebinfo()
+{
+    _switch_build clang clang++ RelWithDebInfo
+}
+
+make-lib()
+{
+    (
+        cd "$_PYTORCH_ENV_ROOT"
+
+        execute_job python setup.py develop
+    )
+}
+
+make-docs()
+{
+    (
+        cd "$_PYTORCH_ENV_ROOT/docs"
+
+        if command -v katex &>/dev/null; then
+            execute_job make html
+        else
+            if ! command -v npm &>/dev/null; then
+                printf "npm not found!\n" >&2
+
+                return 1
+            fi
+
+            if [[ ! -x $(npm bin)/katex ]]; then
+                npm install katex@0.13.13 || return
+            fi
+
+            PATH=$(npm bin):$PATH execute_job make html
+        fi
+    ) || return
+
+    printf "\nRun 'python -m http.server <port>' to browse the docs.\n" >&2
+}
+
+# By default build in release mode with GCC.
+switch-gcc-release
+
+cat << EOF >&2
+PyTorch development environment is set.
+
+You can switch between different compiler and build combinations by executing:
+ - switch-gcc-debug
+ - switch-gcc-release
+ - switch-gcc-relwithdebinfo
+ - switch-clang-debug
+ - switch-clang-release
+ - switch-clang-relwithdebinfo
+
+You can build the library and the documentation by executing:
+ - make-lib
+ - make-docs
+EOF
