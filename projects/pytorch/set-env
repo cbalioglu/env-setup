@@ -57,13 +57,13 @@ export USE_NCCL=ON
 export USE_OPENCV=OFF
 export USE_SYSTEM_NCCL=ON
 export USE_SYSTEM_TBB=ON
-export USE_TBB=ON
+export USE_TBB=OFF
 export USE_TENSORPIPE=ON
 
 export BLAS=MKL
 
-export ATEN_THREADING=TBB
-export MKL_THREADING=TBB
+#export ATEN_THREADING=TBB
+#export MKL_THREADING=TBB
 
 #
 # Helper Functions
