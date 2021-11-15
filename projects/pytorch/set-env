@@ -1,69 +1,79 @@
 #!/usr/bin/env bash
 
+_print_err()
+{
+    printf "$1\n" >&2
+}
+
 if [[ $(basename "$0") == set-env ]]; then
-    printf "This script must be sourced!\n" >&2
+    _print_err "This script must be sourced!"
 
     exit 1
 fi
 
-if [[ -v _PYTORCH_ENV_ROOT ]]; then
-    printf "PyTorch development environment is already set. Open a new shell.\n" >&2
+if [[ -v PYTORCH_ENV_ROOT ]]; then
+    _print_err "PyTorch development environment is already set. Open a new shell."
 
     return 1
 fi
 
 if [[ ! -f setup.py ]]; then
-    printf "This script must be sourced at the root of the PyTorch repository.\n" >&2
+    _print_err "This script must be sourced at the root of the PyTorch repository."
 
     return 1
 fi
 
-# Build for Ampere (e.g. A100).
-export TORCH_CUDA_ARCH_LIST=8.0
-
 # Set the Intel oneAPI variables.
-if [[ -d ~/intel/oneapi ]]; then
-    source ~/intel/oneapi/setvars.sh\
-        --config="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/oneapi-config.txt" >/dev/null
+for _oneapi_root in ~/"intel/oneapi" "/opt/intel/oneapi"; do
+    if [[ -d $_oneapi_root ]]; then
+        source $_oneapi_root/mkl/2021.3.0/env/vars.sh
+        source $_oneapi_root/tbb/2021.3.0/env/vars.sh
 
-    export INTEL_MKL_DIR=$MKLROOT
-fi
+        break
+    fi
+done
+
+unset _oneapi_root
 
 # Update the prompt.
 PS1='(pytorch-${CC:-cc}${CMAKE_BUILD_TYPE:+-${CMAKE_BUILD_TYPE,,}}) '$PS1
 
-export _PYTORCH_ENV_ROOT=$(pwd)
+export PYTORCH_ENV_ROOT=$(pwd)
 
 #
 # Build Options
 #
-export BUILD_BINARY=ON
-export BUILD_CUSTOM_PROTOBUF=OFF
-export BUILD_DOCS=OFF
-export BUILD_TEST=ON
 
-export USE_ASAN=OFF
-export USE_BLAS=ON
-export USE_CUDA=ON
-export USE_CUDNN=ON
+#
+# BLAS and Threading Settings
+#
+if [[ -v MKLROOT ]]; then
+    export INTEL_MKL_DIR=$MKLROOT
+fi
+
+#
+# CUDA Settings
+#
+if command -v nvidia-smi &>/dev/null; then
+    export USE_CUDA=ON
+
+    # Build for Ampere (e.g. A100).
+    export TORCH_CUDA_ARCH_LIST=8.0
+else
+    export USE_CUDA=OFF
+fi
+
+#
+# Distributed Settings
+#
 export USE_DISTRIBUTED=ON
-export USE_FFMPEG=ON
-export USE_GFLAGS=ON
-export USE_GLOG=ON
-export USE_GLOO=ON
-export USE_LAPACK=ON
 export USE_MPI=OFF
-export USE_NCCL=ON
-export USE_OPENCV=OFF
-export USE_SYSTEM_NCCL=ON
-export USE_SYSTEM_TBB=ON
-export USE_TBB=OFF
-export USE_TENSORPIPE=ON
 
-export BLAS=MKL
-
-#export ATEN_THREADING=TBB
-#export MKL_THREADING=TBB
+#
+# Misc Settings
+#
+export USE_ASAN=OFF
+export USE_TSAN=OFF
 
 #
 # Helper Functions
@@ -76,11 +86,11 @@ _switch_build()
     export CMAKE_BUILD_TYPE=$3
 
     (
-        cd "$_PYTORCH_ENV_ROOT"
+        cd "$PYTORCH_ENV_ROOT"
 
         build_dir=build-${CMAKE_BUILD_TYPE,,}/${CC}-$(${CC} -dumpversion)
 
-        mkdir --parents "$build_dir"
+        mkdir -p "$build_dir"
 
         ln --symbolic --force --no-target-directory "$build_dir" build
     )
@@ -119,7 +129,7 @@ switch-clang-relwithdebinfo()
 make-lib()
 {
     (
-        cd "$_PYTORCH_ENV_ROOT"
+        cd "$PYTORCH_ENV_ROOT"
 
         execute_job python setup.py develop
     )
@@ -128,13 +138,13 @@ make-lib()
 make-docs()
 {
     (
-        cd "$_PYTORCH_ENV_ROOT/docs"
+        cd "$PYTORCH_ENV_ROOT/docs"
 
         if command -v katex &>/dev/null; then
             execute_job make html
         else
             if ! command -v npm &>/dev/null; then
-                printf "npm not found!\n" >&2
+                _print_err "npm not found!"
 
                 return 1
             fi
@@ -147,7 +157,7 @@ make-docs()
         fi
     ) || return
 
-    printf "\nRun 'python -m http.server <port>' to browse the docs.\n" >&2
+    _print_err "\nRun 'python -m http.server <port>' to browse the docs."
 }
 
 # By default build in release mode with GCC.
