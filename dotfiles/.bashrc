@@ -90,10 +90,12 @@ export GCC_COLORS='error=31:warning=33:note=32:caret=01;37:locus=35:quote=01;37'
 alias gcc='gcc -fdiagnostics-color=auto'
 
 # Load the programmable completion functions.
-if [[ -f /usr/share/bash-completion/bash_completion ]]; then
+if [[ -r /usr/share/bash-completion/bash_completion ]]; then
     source /usr/share/bash-completion/bash_completion
-elif [[ -f /usr/local/etc/bash_completion ]]; then
+elif [[ -r /usr/local/etc/bash_completion ]]; then
     source /usr/local/etc/bash_completion
+elif [[ -r /usr/local/etc/profile.d/bash_completion.sh ]]; then
+    source /usr/local/etc/profile.d/bash_completion.sh
 fi
 
 # Load the base16 color profile.

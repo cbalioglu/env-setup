@@ -11,7 +11,7 @@ if (( $? )); then
     exit 1
 fi
 
-ln --symbolic --force "$_ccache_path" "$_bin_dir/gcc"
-ln --symbolic --force "$_ccache_path" "$_bin_dir/g++"
-ln --symbolic --force "$_ccache_path" "$_bin_dir/clang"
-ln --symbolic --force "$_ccache_path" "$_bin_dir/clang++"
+ln -sf "$_ccache_path" "$_bin_dir/gcc"
+ln -sf "$_ccache_path" "$_bin_dir/g++"
+ln -sf "$_ccache_path" "$_bin_dir/clang"
+ln -sf "$_ccache_path" "$_bin_dir/clang++"

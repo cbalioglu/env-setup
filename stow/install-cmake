@@ -16,7 +16,7 @@ if [[ ! -f $_pkg_tar ]]; then
     curl --fail --location --create-dirs --output "$_pkg_tar" "$_pkg_url"
 fi
 
-mkdir --parents "$_pkg_dir" && cd "$_"
+mkdir -p "$_pkg_dir" && cd "$_"
 
 tar xvf "$_pkg_tar" --strip-components 1
 

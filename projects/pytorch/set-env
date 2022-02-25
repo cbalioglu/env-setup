@@ -92,7 +92,7 @@ _switch_build()
 
         mkdir -p "$build_dir"
 
-        ln --symbolic --force --no-target-directory "$build_dir" build
+        ln -sf --no-target-directory "$build_dir" build
     )
 }
 

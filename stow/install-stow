@@ -19,7 +19,7 @@ fi
 _src_dir=~/.local/src/$_pkg_tag
 _bld_dir=~/.local/src/$_pkg_tag-build
 
-mkdir --parents "$_src_dir" "$_bld_dir"
+mkdir -p "$_src_dir" "$_bld_dir"
 
 tar xvf "$_pkg_tar" --strip-components 1 --directory "$_src_dir"
 

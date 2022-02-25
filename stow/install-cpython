@@ -20,7 +20,7 @@ _git_tag=v$_pkg_ver
 _src_dir=~/.local/src/$_pkg_tag
 _bld_dir=~/.local/src/$_pkg_tag-build${_pkg_dbg:+-dbg}
 
-mkdir --parents "$_src_dir" "$_bld_dir"
+mkdir -p "$_src_dir" "$_bld_dir"
 
 if [[ ! -d $_src_dir/.git ]]; then
     git clone --depth 1 --shallow-submodules --recurse-submodules --branch $_git_tag "$_git_url" "$_src_dir"

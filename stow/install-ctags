@@ -9,7 +9,7 @@ _git_url=https://github.com/universal-ctags/ctags.git
 _src_dir=~/.local/src/$_pkg_tag
 _bld_dir=~/.local/src/$_pkg_tag-build
 
-mkdir --parents "$_src_dir" "$_bld_dir"
+mkdir -p "$_src_dir" "$_bld_dir"
 
 if [[ ! -d $_src_dir/.git ]]; then
     git clone --depth 1 --shallow-submodules --recurse-submodules "$_git_url" "$_src_dir"
