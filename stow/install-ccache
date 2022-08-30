@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+#!/usr/bin/env bash
+
+set -o errexit
+
+_pkg_ver=${1:-4.6.3}
+
+_pkg_tag=ccache-$_pkg_ver
+
+_pkg_dir=~/.local/stow/$_pkg_tag
+
+_pkg_tar=~/.cache/stow/$_pkg_tag.tar.xz
+
+_pkg_url=https://github.com/ccache/ccache/releases/download/v4.6.3/ccache-4.6.3-linux-x86_64.tar.xz
+
+if [[ ! -f $_pkg_tar ]]; then
+    curl --fail --location --create-dirs --output "$_pkg_tar" "$_pkg_url"
+fi
+
+mkdir -p "$_pkg_dir/bin" && cd "$_"
+
+tar --extract --file "$_pkg_tar" --strip-components 1 ccache-4.6.3-linux-x86_64/ccache
