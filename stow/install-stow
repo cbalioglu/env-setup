@@ -1,34 +1,34 @@
 #!/usr/bin/env bash
 
-set -o errexit
+set -eo pipefail
 
-_pkg_ver=${1:-2.3.1}
+pkg_ver=${1:-2.3.1}
 
-_pkg_tag=stow-$_pkg_ver
+pkg_tag=stow-$pkg_ver
 
-_pkg_dir=~/.local/stow/$_pkg_tag
+pkg_dir=~/.local/stow/$pkg_tag
 
-_pkg_tar=~/.cache/stow/$_pkg_tag.tgz
+pkg_tar=~/.cache/stow/$pkg_tag.tgz
 
-_pkg_url=http://ftp.gnu.org/gnu/stow/stow-$_pkg_ver.tar.gz
+pkg_url=http://ftp.gnu.org/gnu/stow/stow-$pkg_ver.tar.gz
 
-if [[ ! -f $_pkg_tar ]]; then
-    curl --fail --location --create-dirs --output "$_pkg_tar" "$_pkg_url"
+if [[ ! -f $pkg_tar ]]; then
+    curl --fail --location --create-dirs --output "$pkg_tar" "$pkg_url"
 fi
 
-_src_dir=~/.local/src/$_pkg_tag
-_bld_dir=~/.local/src/$_pkg_tag-build
+src_dir=~/.local/src/$pkg_tag
+bld_dir=~/.local/src/$pkg_tag-build
 
-mkdir -p "$_src_dir" "$_bld_dir"
+mkdir -p "$src_dir" "$bld_dir"
 
-tar xvf "$_pkg_tar" --strip-components 1 --directory "$_src_dir"
+tar xvf "$pkg_tar" --strip-components 1 --directory "$src_dir"
 
-cd "$_bld_dir"
+cd "$bld_dir"
 
-"$_src_dir/configure" --prefix="$_pkg_dir"
+"$src_dir/configure" --prefix="$pkg_dir"
 
 make && make install
 
-cat << EOF > "$_pkg_dir/.stow-local-ignore"
+cat << EOF > "$pkg_dir/.stow-local-ignore"
 ^/share/info$
 EOF

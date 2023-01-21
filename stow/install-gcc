@@ -1,38 +1,38 @@
 #!/usr/bin/env bash
 
-set -o errexit
+set -eo pipefail
 
-_pkg_ver=${1:-11.2.0}
+pkg_ver=${1:-11.2.0}
 
-_pkg_tag=gcc-$_pkg_ver
+pkg_tag=gcc-$pkg_ver
 
-_pkg_dir=~/.local/stow/$_pkg_tag
+pkg_dir=~/.local/stow/$pkg_tag
 
-_git_url=https://github.com/gcc-mirror/gcc.git
+git_url=https://github.com/gcc-mirror/gcc.git
 
-_git_tag=releases/gcc-$_pkg_ver
+git_tag=releases/gcc-$pkg_ver
 
-_src_dir=~/.local/src/$_pkg_tag
-_bld_dir=~/.local/src/$_pkg_tag-build
+src_dir=~/.local/src/$pkg_tag
+bld_dir=~/.local/src/$pkg_tag-build
 
-mkdir -p "$_src_dir" "$_bld_dir"
+mkdir -p "$src_dir" "$bld_dir"
 
-if [[ ! -d $_src_dir/.git ]]; then
-    git clone --depth 1 --shallow-submodules --recurse-submodules --branch $_git_tag "$_git_url" "$_src_dir"
+if [[ ! -d $src_dir/.git ]]; then
+    git clone --depth 1 --shallow-submodules --recurse-submodules --branch "$git_tag" "$git_url" "$src_dir"
 fi
 
-cd "$_src_dir"
+cd "$src_dir"
 
 contrib/download_prerequisites
 
-cd "$_bld_dir"
+cd "$bld_dir"
 
-"$_src_dir/configure" --enable-languages="c,c++,lto" --disable-multilib --with-system-zlib --prefix="$_pkg_dir"
+"$src_dir/configure" --enable-languages="c,c++,lto" --disable-multilib --with-system-zlib --prefix="$pkg_dir"
 
 execute_job make --jobs
 
 make install-strip
 
-cat << EOF > "$_pkg_dir/.stow-local-ignore"
+cat << EOF > "$pkg_dir/.stow-local-ignore"
 ^/share/info$
 EOF

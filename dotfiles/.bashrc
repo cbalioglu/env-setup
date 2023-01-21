@@ -6,13 +6,13 @@ fi
 # Determine the operating system.
 case $(uname -s) in
     Linux)
-        _machine=Linux
+        __machine=Linux
         ;;
     Darwin)
-        _machine=Mac
+        __machine=Mac
         ;;
     *)
-        _machine=Other
+        __machine=Other
         ;;
 esac
 
@@ -64,7 +64,7 @@ stty -ixon
 [[ -x /usr/bin/lesspipe ]] && eval "$(lesspipe)"
 
 # Set up the ls aliases.
-if [[ $_machine == Mac ]]; then
+if [[ $__machine == Mac ]]; then
     alias ls='ls -GF'
     alias ll='ls -hl'
 else
@@ -83,10 +83,12 @@ fi
 
 # Colorize the output of grep.
 export GREP_COLORS='mt=33:ms=33:mc=33:fn=35:ln=35:bn=35:se=37'
+
 alias grep='grep --color=auto'
 
 # Colorize the output of GCC.
 export GCC_COLORS='error=31:warning=33:note=32:caret=01;37:locus=35:quote=01;37'
+
 alias gcc='gcc -fdiagnostics-color=auto'
 
 # Load the programmable completion functions.
@@ -100,12 +102,13 @@ fi
 
 # Load the base16 color profile.
 BASE16_SHELL=~/.config/base16-shell
+
 [[ -f $BASE16_SHELL/profile_helper.sh ]] && eval "$("$BASE16_SHELL/profile_helper.sh")"
 
 # This function is used by various shell scripts to execute computationally
 # intensive jobs. By default it runs everything locally, but, by overriding
 # it in a shell session or in a script, the jobs can be offloaded to an HPC
-# cluster (e.g. Slurm).
+# job scheduler (e.g. Slurm).
 execute_job()
 {
     "$@"
@@ -116,4 +119,4 @@ export -f execute_job
 # Load the local post-configuration.
 [[ -f ~/.bashrc.post ]] && source ~/.bashrc.post
 
-unset _machine
+unset __machine

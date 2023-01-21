@@ -1,10 +1,12 @@
-_tmp_path=$PATH
+__tmp_path=$PATH
 
 # Load Slurm aliases.
 source /data/shared/bin/cluster_env.sh
 
 # Prevent cluster_env.sh modifying our PATH.
-PATH=$_tmp_path; unset _tmp_path
+PATH=$__tmp_path
+
+unset __tmp_path
 
 # Set by cluster_env.sh to the path of CUDA 10.0 nvcc; since we are
 # using our own version of CUDA, avoid any conflicts.
@@ -16,9 +18,7 @@ execute_job()
     srun -t 5:00:00 --cpus-per-task=24 "$@"
 }
 
-#
 # Conda Setup
-#
 __conda_setup="$("$CONDA_DIR/bin/conda" "shell.bash" "hook" 2>/dev/null)"
 
 if [ $? -eq 0 ]; then

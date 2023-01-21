@@ -1,31 +1,31 @@
 #!/usr/bin/env bash
 
-set -o errexit
+set -eo pipefail
 
-_pkg_ver=${1:-2.2.0}
+pkg_ver=${1:-2.2.0}
 
-_pkg_tag=ag-$_pkg_ver
+pkg_tag=ag-$pkg_ver
 
-_git_url=https://github.com/ggreer/the_silver_searcher.git
+git_url=https://github.com/ggreer/the_silver_searcher.git
 
-_git_tag=$_pkg_ver
+git_tag=$pkg_ver
 
-_src_dir=~/.local/src/$_pkg_tag
-_bld_dir=~/.local/src/$_pkg_tag-build
+src_dir=~/.local/src/$pkg_tag
+bld_dir=~/.local/src/$pkg_tag-build
 
-mkdir -p "$_src_dir" "$_bld_dir"
+mkdir -p "$src_dir" "$bld_dir"
 
-if [[ ! -d $_src_dir/.git ]]; then
-    git clone --depth 1 --shallow-submodules --recurse-submodules --branch $_git_tag "$_git_url" "$_src_dir"
+if [[ ! -d $src_dir/.git ]]; then
+    git clone --depth 1 --shallow-submodules --recurse-submodules --branch "$git_tag" "$git_url" "$src_dir"
 fi
 
-cd "$_src_dir"
+cd "$src_dir"
 
 ./autogen.sh
 
-cd "$_bld_dir"
+cd "$bld_dir"
 
-"$_src_dir/configure" --prefix="$HOME/.local/stow/$_pkg_tag"
+"$src_dir/configure" --prefix="$HOME/.local/stow/$pkg_tag"
 
 execute_job make --jobs
 

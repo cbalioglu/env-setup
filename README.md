@@ -13,8 +13,8 @@ locations by running the `install-dotfiles` or `install-dotfiles-fb` scripts
 ## projects
 This directory has a subdirectory per project (e.g. PyTorch). Each subdirectory
 contains script(s) relevant to set up a development environment for that
-particular project. For instance a PyTorch development environment can be set up
-via:
+particular project. For instance, a PyTorch development environment can be set
+up via:
 
 ```sh
 $ cd <pytorch-repo-dir>
@@ -69,16 +69,4 @@ build a debug version:
 
 ```sh
 $ <env-setup-repo-dir>/stow/install-cpython 3.6.14-dbg
-```
-
-## venvs
-This directory includes the requirement.txt files for various Python virtual
-environments to be used with projects such as PyTorch. For instance a new
-virtual environment for PyTorch can be created via:
-
-```sh
-$ python -m venv ~/venvs/py36-pytorch-devel
-$ cd ~/venvs/py36-pytorch-devel
-$ source bin/activate
-$ pip install <env-setup-repo-dir>/venvs/pytorch-devel.txt
 ```

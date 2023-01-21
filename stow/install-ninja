@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
 
-set -o errexit
+set -eo pipefail
 
-_pkg_ver=${1:-1.10.2}
+pkg_ver=${1:-1.10.2}
 
-_pkg_tag=ninja-$_pkg_ver
+pkg_tag=ninja-$pkg_ver
 
-_pkg_zip=~/.cache/stow/$_pkg_tag.zip
+pkg_zip=~/.cache/stow/$pkg_tag.zip
 
-_pkg_url=https://github.com/ninja-build/ninja/releases/download/v$_pkg_ver/ninja-linux.zip
+pkg_url=https://github.com/ninja-build/ninja/releases/download/v$pkg_ver/ninja-linux.zip
 
-if [[ ! -f $_pkg_zip ]]; then
-    curl --fail --location --create-dirs --output "$_pkg_zip" "$_pkg_url"
+if [[ ! -f $pkg_zip ]]; then
+    curl --fail --location --create-dirs --output "$pkg_zip" "$pkg_url"
 fi
 
-mkdir -p ~/.local/stow/$_pkg_tag/bin && cd "$_"
+mkdir -p ~/.local/stow/$pkg_tag/bin && cd "$_"
 
-unzip "$_pkg_zip"
+unzip "$pkg_zip"
