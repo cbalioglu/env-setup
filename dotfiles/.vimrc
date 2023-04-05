@@ -26,8 +26,8 @@ set colorcolumn=80              " Highlight a comma separated list of screen col
 
 syntax on
 
-" For C++ and CMake files use a line length of 100 characters.
-autocmd FileType cpp,cmake setlocal colorcolumn=100
+autocmd FileType py,pyi setlocal colorcolumn=88
+autocmd FileType cmake,h,hpp,cc,cpp setlocal colorcolumn=100
 
 " Show directories before files in netrw.
 let g:netrw_sort_sequence='\/$,*'
